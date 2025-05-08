@@ -109,7 +109,8 @@ export default function SignUpForm() {
                         </div>
                     )}
 
-                    <form onSubmit={handleVerificationSubmit}>
+                    {/* why not here */}
+                    <form onSubmit={handleVerificationSubmit}> 
                         <div>
                             <label htmlFor="verificationCode">Verification Code</label>
                             <Input
