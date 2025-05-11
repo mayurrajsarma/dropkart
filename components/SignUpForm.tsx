@@ -28,6 +28,8 @@ export default function SignUpForm() {
     const router = useRouter() ;
     const [verifying,setVerifying] = useState(false) ;
     const [isSubmitting,setIsSubmitting] = useState(false) ;
+    const [showPassword,setShowPassword] = useState(false);
+    const [showConfirmPassword,setShowConfirmPassword] = useState(false);
     const [authError,setAuthError] = useState<string | null>(null)
     const [verificationCode,setVerificationCode] = useState("") ;
     const [verificationError,setVerificationError] = useState<string | null>(null) ;
@@ -47,6 +49,9 @@ export default function SignUpForm() {
     })
 
     const onSubmit = async (data: z.infer<typeof signupSchema>)=>  {
+    // When your page first loads (especially in Next.js), components may render before Clerk has fully loaded on the client side.
+    // To avoid errors, isLoaded tells you:
+    // "Hey! Wait… I’m not ready yet!"
         if(!isLoaded) return; //didnot understand
         setIsSubmitting(true);
         setAuthError(null);
@@ -104,7 +109,7 @@ export default function SignUpForm() {
                 <CardBody>
                     {verificationError && (
                         <div>
-                            {/* <AlertCircle className="h-5 w-5 flex-shrink-0" /> */}
+                            <AlertCircle className="h-5 w-5 flex-shrink-0" />
                             <p>{verificationError}</p>
                         </div>
                     )}
@@ -164,7 +169,7 @@ export default function SignUpForm() {
             <CardBody>
                 {authError && (
                     <div>
-                        {/* <AlertCircle className="h-5 w-5 flex-shrink-0" /> */}
+                        <AlertCircle className="h-5 w-5 flex-shrink-0" />
                         <p>{authError}</p>
                     </div>
                 )}
@@ -177,7 +182,7 @@ export default function SignUpForm() {
                             type="email"
                             placeholder="your.email@example.com"
                             startContent={<Mail className="h-4 w-4 text-default-500" />}
-                            isInvalid={!!errors.email}
+                            isInvalid={!!errors.email} //It’s called double negation.It’s a trick to convert any value into a true or false (boolean).
                             errorMessage={errors.email?.message}
                             {...register("email")}
                             className="w-full"
@@ -186,12 +191,60 @@ export default function SignUpForm() {
 
                     <div>
                         <label htmlFor="password" className="">Password</label>
-                        <Input/>
+                        <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            startContent={<Lock className="h-4 w-4 text-default-500" />}
+                            endContent={
+                                <Button
+                                isIconOnly
+                                variant="light"
+                                size="sm"
+                                onClick={() => setShowPassword(!showPassword)}
+                                type="button"
+                                >
+                                {showPassword ? (
+                                    <EyeOff className="h-4 w-4 text-default-500" />
+                                ) : (
+                                    <Eye className="h-4 w-4 text-default-500" />
+                                )}
+                                </Button>
+                            }
+                            isInvalid={!!errors.password}
+                            errorMessage={errors.password?.message}
+                            {...register("password")}
+                            className="w-full"
+                        />
                     </div>
 
                     <div>
                         <label htmlFor="passwordConfirmation">Confirm Password</label>
-                        <Input/>
+                        <Input
+                            id="passwordConfirmation"
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            startContent={<Lock className="h-4 w-4 text-default-500" />}
+                            endContent={
+                                <Button
+                                isIconOnly
+                                variant="light"
+                                size="sm"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                type="button"
+                                >
+                                {showConfirmPassword ? (
+                                    <EyeOff className="h-4 w-4 text-default-500" />
+                                ) : (
+                                    <Eye className="h-4 w-4 text-default-500" />
+                                )}
+                                </Button>
+                            }
+                            isInvalid={!!errors.passwordConfirmation} //when isInvalid is true , errorMessage is displayed
+                            errorMessage={errors.passwordConfirmation?.message}
+                            {...register("passwordConfirmation")}
+                            className="w-full"
+                        />
                     </div>
                     {/* ..................... */}
                     
